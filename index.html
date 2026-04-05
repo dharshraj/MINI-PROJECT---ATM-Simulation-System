@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoBank ATM • Secure Transaction System</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="container">
+    <div class="atm-header"></div>
+
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-header">
+            <div class="atm-title">NEOBANK</div>
+            <div class="atm-subtitle">SECURE ATM TRANSACTION SYSTEM</div>
+        </div>
+
+        <div class="input-card">
+            <div class="input-group">
+                <label>🔐 ACCOUNT NUMBER</label>
+                <input type="text" id="loginAccount" placeholder="Enter 4-6 digit account number">
+            </div>
+            <div class="input-group">
+                <label>🔑 SECURE PIN</label>
+                <input type="password" id="loginPin" maxlength="4" placeholder="••••">
+            </div>
+            <button onclick="login()">⏎ ACCESS ACCOUNT</button>
+            <button class="secondary-btn" onclick="showCreateAccount()" style="margin-top: 10px;">+ CREATE NEW ACCOUNT</button>
+            <div id="loginMessage" class="message"></div>
+        </div>
+    </div>
+
+    <!-- Create Account Screen -->
+    <div id="createScreen" class="login-screen" style="display:none;">
+        <div class="login-header">
+            <div class="atm-title">OPEN ACCOUNT</div>
+            <div class="atm-subtitle">JOIN NEOBANK TODAY</div>
+        </div>
+
+        <div class="input-card">
+            <div class="input-group">
+                <label>👤 FULL NAME</label>
+                <input type="text" id="createName" placeholder="As per government ID">
+            </div>
+            <div class="input-group">
+                <label>🔑 SET 4-DIGIT PIN</label>
+                <input type="password" id="createPin" maxlength="4" placeholder="Choose a secure PIN">
+            </div>
+            <div class="input-group">
+                <label>💰 INITIAL DEPOSIT (₹)</label>
+                <input type="number" id="createDeposit" placeholder="Minimum ₹500">
+            </div>
+            <button onclick="createAccount()">✓ CREATE ACCOUNT</button>
+            <button class="secondary-btn" onclick="showLogin()">← BACK TO LOGIN</button>
+            <div id="createMessage" class="message"></div>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="dashboard">
+        <div class="dashboard-grid">
+            <!-- Left Sidebar -->
+            <div class="account-sidebar">
+                <div class="atm-card">
+                    <div style="margin-bottom: 15px;">
+                        <div style="color: #00d4ff; font-size: 12px;">WELCOME BACK,</div>
+                        <div id="holderName" style="font-size: 20px; font-weight: bold; color: #00ff88;">-----</div>
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <div style="color: #00d4ff; font-size: 11px;">ACCOUNT NUMBER</div>
+                        <div id="accountNo" style="font-family: monospace; font-size: 16px;">••••</div>
+                    </div>
+
+                    <div class="balance-circle">
+                        <div class="circle-progress">
+                            <svg width="150" height="150">
+                                <defs>
+                                    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#00ff88;stop-opacity:1" />
+                                    </linearGradient>
+                                </defs>
+                                <circle class="circle-bg" cx="75" cy="75" r="70" fill="none" stroke-width="8"/>
+                                <circle class="circle-fill" id="balanceCircle" cx="75" cy="75" r="70" fill="none" stroke-width="8" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        <div class="balance-amount">
+                            ₹<span id="balance">0.00</span>
+                        </div>
+                    </div>
+
+                    <div class="limit-indicator">
+                        <div style="font-size: 12px; color: #00d4ff;">DAILY LIMIT USAGE</div>
+                        <div class="limit-bar">
+                            <div class="limit-fill" id="limitFill"></div>
+                        </div>
+                        <div style="font-size: 11px; margin-top: 5px;" id="limitText">₹0 / ₹50,000</div>
+                    </div>
+                </div>
+
+                <button onclick="logout()" style="background: linear-gradient(135deg, #ff3366, #ff6699);">↵ LOGOUT & SECURE EXIT</button>
+            </div>
+
+            <!-- Right Actions Area -->
+            <div class="actions-area">
+                <!-- Authorization -->
+                <div class="action-card">
+                    <h3>⚡ AUTHORIZE TRANSACTION</h3>
+                    <div class="input-group" style="margin-bottom: 0;">
+                        <input type="password" id="authPin" maxlength="4" placeholder="Enter 4-digit PIN" style="margin-bottom: 10px;">
+                    </div>
+                    <button onclick="authorize()">✓ VERIFY PIN</button>
+                    <div id="authStatus" style="margin-top: 10px; font-size: 12px; color: #ff3366;"></div>
+                </div>
+
+                <!-- Deposit/Withdraw -->
+                <div class="action-card">
+                    <h3>💰 TRANSACTION AMOUNT</h3>
+                    <div class="input-group" style="margin-bottom: 10px;">
+                        <input type="number" id="amount" placeholder="Enter amount in ₹">
+                    </div>
+                    <div class="quick-amounts">
+                        <button class="quick-btn" onclick="setAmount(500)">₹500</button>
+                        <button class="quick-btn" onclick="setAmount(1000)">₹1,000</button>
+                        <button class="quick-btn" onclick="setAmount(2000)">₹2,000</button>
+                        <button class="quick-btn" onclick="setAmount(5000)">₹5,000</button>
+                        <button class="quick-btn" onclick="setAmount(10000)">₹10,000</button>
+                        <button class="quick-btn" onclick="setAmount(25000)">₹25,000</button>
+                    </div>
+                    <div style="display: flex; gap: 10px; margin-top: 15px;">
+                        <button onclick="deposit()" style="flex: 1;">📥 DEPOSIT</button>
+                        <button onclick="withdraw()" style="flex: 1;">📤 WITHDRAW</button>
+                    </div>
+                </div>
+
+                <!-- Transfer -->
+                <div class="action-card">
+                    <h3>🔄 TRANSFER FUNDS</h3>
+                    <div class="input-group" style="margin-bottom: 10px;">
+                        <input type="text" id="transferTo" placeholder="Destination account number">
+                    </div>
+                    <button onclick="transfer()">➡ TRANSFER (PIN REQUIRED)</button>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="action-card">
+                    <div style="display: flex; gap: 10px;">
+                        <button onclick="checkBalance()" style="flex: 1;">📊 CHECK BALANCE</button>
+                        <button onclick="refreshHistory()" style="flex: 1;">📜 VIEW HISTORY</button>
+                    </div>
+                </div>
+
+                <!-- Transaction History -->
+                <div class="action-card">
+                    <h3>📋 TRANSACTION LOG</h3>
+                    <div id="transactionHistory" class="transaction-list">
+                        ◆ No transactions yet
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="dashboardMessage" class="message"></div>
+    </div>
+</div>
+
+<script>
+    let currentToken = null;
+    let isAuthorized = false;
+    let dailyLimitUsed = 0;
+    const DAILY_LIMIT = 50000;
+
+    function setAmount(amount) {
+        document.getElementById('amount').value = amount;
+    }
+
+    function updateDailyLimit(amount) {
+        dailyLimitUsed += amount;
+        const percentage = (dailyLimitUsed / DAILY_LIMIT) * 100;
+        document.getElementById('limitFill').style.width = percentage + '%';
+        document.getElementById('limitText').innerHTML = `₹${dailyLimitUsed} / ₹${DAILY_LIMIT}`;
+
+        if (dailyLimitUsed > DAILY_LIMIT) {
+            showMessage('Daily limit exceeded!', 'error');
+            return false;
+        }
+        return true;
+    }
+
+    function updateBalanceCircle(balance) {
+        const maxBalance = 100000;
+        const percentage = Math.min((balance / maxBalance) * 100, 100);
+        const circumference = 440;
+        const offset = circumference - (percentage / 100) * circumference;
+        const circle = document.getElementById('balanceCircle');
+        if (circle) {
+            circle.style.strokeDashoffset = offset;
+        }
+    }
+
+    function showCreateAccount() {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('createScreen').style.display = 'block';
+    }
+
+    function showLogin() {
+        document.getElementById('createScreen').style.display = 'none';
+        document.getElementById('loginScreen').style.display = 'block';
+    }
+
+    async function createAccount() {
+        const name = document.getElementById('createName').value;
+        const pin = document.getElementById('createPin').value;
+        const deposit = document.getElementById('createDeposit').value;
+
+        const response = await fetch('/api/create-account', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: `name=${encodeURIComponent(name)}&pin=${pin}&deposit=${deposit}`
+        });
+
+        const data = await response.json();
+        const msgDiv = document.getElementById('createMessage');
+
+        if (data.success) {
+            msgDiv.className = 'message success';
+            msgDiv.innerHTML = `✓ ACCOUNT CREATED!<br>Account Number: ${data.accountNumber}<br>Keep this number safe!`;
+            setTimeout(() => showLogin(), 3000);
+        } else {
+            msgDiv.className = 'message error';
+            msgDiv.textContent = `✗ ${data.error}`;
+        }
+    }
+
+    async function login() {
+        const accountNumber = document.getElementById('loginAccount').value;
+        const pin = document.getElementById('loginPin').value;
+
+        const response = await fetch('/api/login', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: `accountNumber=${accountNumber}&pin=${pin}`
+        });
+
+        const data = await response.json();
+        const msgDiv = document.getElementById('loginMessage');
+
+        if (data.success) {
+            currentToken = data.token;
+            document.getElementById('holderName').textContent = data.holderName.toUpperCase();
+            document.getElementById('accountNo').textContent = data.accountNumber;
+            document.getElementById('balance').textContent = data.balance.toFixed(2);
+            updateBalanceCircle(data.balance);
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('dashboard').classList.add('active');
+            refreshHistory();
+            dailyLimitUsed = 0;
+            updateDailyLimit(0);
+            msgDiv.className = '';
+            msgDiv.textContent = '';
+        } else {
+            msgDiv.className = 'message error';
+            msgDiv.textContent = `✗ ACCESS DENIED: ${data.error}`;
+        }
+    }
+
+    async function logout() {
+        await fetch('/api/logout', {method: 'POST'});
+        currentToken = null;
+        isAuthorized = false;
+        document.getElementById('dashboard').classList.remove('active');
+        document.getElementById('loginScreen').style.display = 'block';
+        document.getElementById('loginAccount').value = '';
+        document.getElementById('loginPin').value = '';
+    }
+
+    async function authorize() {
+        const pin = document.getElementById('authPin').value;
+        // Simple verification - in production, verify with server
+        isAuthorized = true;
+        document.getElementById('authStatus').textContent = '✓ AUTHORIZED';
+        document.getElementById('authStatus').style.color = '#00ff88';
+        setTimeout(() => {
+            document.getElementById('authStatus').textContent = '';
+            isAuthorized = false;
+        }, 5000);
+        showMessage('Authorization granted for 5 seconds', 'success');
+    }
+
+    async function deposit() {
+        if (!isAuthorized) {
+            showMessage('⚠ AUTHORIZATION REQUIRED: Please verify PIN first', 'error');
+            return;
+        }
+        const amount = parseFloat(document.getElementById('amount').value);
+        if (!updateDailyLimit(amount)) return;
+
+        const response = await fetch('/api/deposit', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: `amount=${amount}`
+        });
+        const data = await response.json();
+        if (data.success) {
+            showMessage(`✓ DEPOSIT SUCCESSFUL: ₹${amount}`, 'success');
+            document.getElementById('balance').textContent = data.balance.toFixed(2);
+            updateBalanceCircle(data.balance);
+            refreshHistory();
+        } else {
+            showMessage(`✗ ${data.error}`, 'error');
+        }
+    }
+
+    async function withdraw() {
+        if (!isAuthorized) {
+            showMessage('⚠ AUTHORIZATION REQUIRED: Please verify PIN first', 'error');
+            return;
+        }
+        const amount = parseFloat(document.getElementById('amount').value);
+        if (!updateDailyLimit(amount)) return;
+
+        const response = await fetch('/api/withdraw', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: `amount=${amount}`
+        });
+        const data = await response.json();
+        if (data.success) {
+            showMessage(`✓ WITHDRAWAL SUCCESSFUL: ₹${amount}`, 'success');
+            document.getElementById('balance').textContent = data.balance.toFixed(2);
+            updateBalanceCircle(data.balance);
+            refreshHistory();
+        } else {
+            showMessage(`✗ ${data.error}`, 'error');
+        }
+    }
+
+    async function transfer() {
+        if (!isAuthorized) {
+            showMessage('⚠ AUTHORIZATION REQUIRED: Please verify PIN first', 'error');
+            return;
+        }
+        const toAccount = document.getElementById('transferTo').value;
+        const amount = parseFloat(document.getElementById('amount').value);
+        if (!updateDailyLimit(amount)) return;
+
+        const response = await fetch('/api/transfer', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: `toAccount=${toAccount}&amount=${amount}`
+        });
+        const data = await response.json();
+        if (data.success) {
+            showMessage(`✓ TRANSFER COMPLETE: ₹${amount} to Account ${toAccount}`, 'success');
+            document.getElementById('balance').textContent = data.balance.toFixed(2);
+            updateBalanceCircle(data.balance);
+            refreshHistory();
+        } else {
+            showMessage(`✗ ${data.error}`, 'error');
+        }
+    }
+
+    async function checkBalance() {
+        const response = await fetch('/api/balance');
+        const data = await response.json();
+        showMessage(`💰 CURRENT BALANCE: ₹${data.balance}`, 'success');
+    }
+
+    async function refreshHistory() {
+        const response = await fetch('/api/history');
+        const data = await response.json();
+        const historyDiv = document.getElementById('transactionHistory');
+        if (data.history.length === 0) {
+            historyDiv.innerHTML = '<div class="transaction-item">◆ No transactions recorded</div>';
+        } else {
+            historyDiv.innerHTML = data.history.slice(-10).reverse().map(h =>
+                `<div class="transaction-item">${h.substring(0, 100)}</div>`
+            ).join('');
+        }
+    }
+
+    function showMessage(msg, type) {
+        const msgDiv = document.getElementById('dashboardMessage');
+        msgDiv.className = `message ${type}`;
+        msgDiv.innerHTML = msg;
+        setTimeout(() => {
+            msgDiv.className = 'message';
+            msgDiv.innerHTML = '';
+        }, 4000);
+    }
+</script>
+</body>
+</html>
