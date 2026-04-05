@@ -1,0 +1,144 @@
+ATM Simulation System
+======================
+
+A complete ATM system with Java backend and modern web interface. Users can create accounts, deposit, withdraw, transfer money, and view transaction history.
+
+Features
+--------
+
+- Create new account with auto-generated account number
+- Secure login with 4-digit PIN
+- Deposit money into account
+- Withdraw money with balance check
+- Transfer funds between accounts
+- Check account balance
+- View complete transaction history
+- Daily transaction limit tracking
+- Modern cyberpunk themed interface
+
+Technology Stack
+----------------
+
+Backend:
+- Java (pure, no frameworks)
+- HashMap for account storage
+- ArrayList for transaction history
+- Custom exception handling
+- Built-in HTTP server
+
+Frontend:
+- HTML5
+- CSS3
+- JavaScript
+- Responsive design
+
+How to Run
+----------
+
+Step 1: Make sure you have Java JDK 8 or higher installed
+
+Step 2: Open terminal/command prompt in project folder
+
+Step 3: Compile the server
+javac src/ATMServer.java
+
+Step 4: Run the server
+java -cp src ATMServer
+
+Step 5: Open browser and go to
+http://localhost:8080
+
+How to Use
+----------
+
+Create Account:
+1. Click "Create New Account"
+2. Enter your full name
+3. Set a 4-digit PIN
+4. Make initial deposit (minimum Rs 500)
+5. Save your account number
+
+Login:
+1. Enter your account number
+2. Enter your PIN
+3. Click "Access Account"
+
+Make Transactions:
+1. First authorize by entering your PIN
+2. Enter amount (or use quick amount buttons)
+3. Click Deposit, Withdraw, or Transfer
+4. Check balance and history anytime
+
+Project Structure
+-----------------
+
+MINI-PROJECT---ATM-Simulation-System/
+|
++-- src/
+|   +-- ATMServer.java      (main server code)
+|
++-- index.html               (web interface)
++-- styles.css               (styling)
++-- README.md                (this file)
++-- .gitignore               (git ignore rules)
+
+API Endpoints
+-------------
+
+POST   /api/create-account    Create new account
+POST   /api/login             Login to account
+POST   /api/deposit           Deposit money
+POST   /api/withdraw          Withdraw money
+POST   /api/transfer          Transfer funds
+GET    /api/balance           Check balance
+GET    /api/history           View transaction history
+POST   /api/logout            Logout
+
+Data Structures Used
+--------------------
+
+HashMap<String, Account>     Stores all accounts with quick lookup
+ArrayList<String>            Stores transaction history for each account
+String                       Stores PIN and account numbers
+
+Error Handling
+--------------
+
+The system handles these errors:
+- Invalid account number
+- Wrong PIN
+- Insufficient balance
+- Negative deposit or withdrawal amounts
+- Daily limit exceeded
+- Account not found
+- Transfer to invalid account
+
+Test Scenarios
+--------------
+
+Test 1: Create Account
+Input: Name=John, PIN=1234, Deposit=1000
+Expected: Account created with balance 1000
+
+Test 2: Withdraw More Than Balance
+Input: Withdraw 2000 when balance is 1000
+Expected: Error message "Insufficient balance"
+
+Test 3: Transfer Money
+Input: Transfer 500 from Account A to Account B
+Expected: A balance decreases by 500, B balance increases by 500
+
+Test 4: Wrong PIN
+Input: Login with wrong PIN
+Expected: Access denied
+
+System Requirements
+-------------------
+
+- Java JDK 8 or higher
+- Any modern web browser (Chrome, Firefox, Edge, Safari)
+- 256 MB RAM minimum
+- 50 MB disk space
+- Operating System: Windows, Mac, or Linux
+
+
